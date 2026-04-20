@@ -10,6 +10,12 @@
     <PackageId>UmbMediaSqueeze</PackageId>
     <Product>UmbMediaSqueeze</Product>
     <Title>UmbMediaSqueeze</Title>
+    <Version>17.3.4.0</Version>
+    <PackageTags>umbraco;umbraco-marketplace;media-utils</PackageTags>
+    <Authors>Stelios Zisis</Authors>
+    <PackageProjectUrl>https://github.com/nightriderjt/UmbMediaSqueeze</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/nightriderjt/UmbMediaSqueeze</RepositoryUrl>
+    <PackageIcon>umbMediaSqueezeLogo.png</PackageIcon>
   </PropertyGroup>
 
 
