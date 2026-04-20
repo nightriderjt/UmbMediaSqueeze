@@ -1,0 +1,14 @@
+{
+  "id": "UmbMediaSqueeze",
+  "name": "UmbMediaSqueeze",
+  "version": "1.0.0",
+  "allowTelemetry": true,
+  "extensions": [
+    {
+      "name": "Umb Media Squeeze Bundle",
+      "alias": "UmbMediaSqueeze.Bundle",
+      "type": "bundle",
+      "js": "/App_Plugins/UmbMediaSqueeze/umb-media-squeeze.js"
+    }
+  ]
+}

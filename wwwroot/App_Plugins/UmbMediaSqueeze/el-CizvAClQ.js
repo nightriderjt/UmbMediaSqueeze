@@ -1,0 +1,34 @@
+const e = {
+  umbMediaSqueeze: {
+    name: "Media Squeeze",
+    description: "Συμπίεση και λήψη φακέλων πολυμέσων",
+    compress: "Συμπίεση",
+    download: "Λήψη",
+    selectFolders: "Επιλογή Φακέλων",
+    cancel: "Ακύρωση",
+    selectAtLeastOneFolder: "Παρακαλώ επιλέξτε τουλάχιστον έναν φάκελο",
+    compressing: "Συμπίεση...",
+    downloadReady: "Η λήψη είναι έτοιμη",
+    errorOccurred: "Παρουσιάστηκε σφάλμα",
+    title: "Media Squeeze",
+    progress: "Συμπίεση... {0}%",
+    queued: "Σε αναμονή",
+    processing: "Επεξεργασία",
+    preparing: "Προετοιμασία αρχείων...",
+    collecting: "Συλλογή αρχείων...",
+    creating: "Δημιουργία αρχείου...",
+    finalizing: "Ολοκλήρωση...",
+    completed: "Η συμπίεση ολοκληρώθηκε",
+    failed: "Η συμπίεση απέτυχε",
+    button_cancel: "Ακύρωση",
+    button_download: "Λήψη",
+    button_close: "Κλείσιμο",
+    error_failed: "Η συμπίεση απέτυχε: {0}",
+    error_notFound: "Δεν βρέθηκαν πολυμέσα",
+    error_jobNotFound: "Δεν βρέθηκε εργασία συμπίεσης"
+  }
+};
+export {
+  e as default
+};
+//# sourceMappingURL=el-CizvAClQ.js.map

@@ -1,0 +1,34 @@
+const e = {
+  umbMediaSqueeze: {
+    name: "Media Squeeze",
+    description: "Compress and download media folders",
+    compress: "Squeeze",
+    download: "Download",
+    selectFolders: "Select Folders",
+    cancel: "Cancel",
+    selectAtLeastOneFolder: "Please select at least one folder",
+    compressing: "Squeezing...",
+    downloadReady: "Download ready",
+    errorOccurred: "An error occurred",
+    title: "Media Squeeze",
+    progress: "Squeezing... {0}%",
+    queued: "Queued",
+    processing: "Processing",
+    preparing: "Preparing files...",
+    collecting: "Collecting files...",
+    creating: "Creating archive...",
+    finalizing: "Finalizing...",
+    completed: "Squeezing complete",
+    failed: "Squeezing failed",
+    button_cancel: "Cancel",
+    button_download: "Download",
+    button_close: "Close",
+    error_failed: "Squeezing failed: {0}",
+    error_notFound: "Media not found",
+    error_jobNotFound: "Squeezing job not found"
+  }
+};
+export {
+  e as default
+};
+//# sourceMappingURL=en-BYb-TRS_.js.map
