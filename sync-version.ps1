@@ -1,5 +1,4 @@
 #!/usr/bin/env pwsh
-# Version sync script for UmbMetrics project
 # This script reads the version from UmbMetrics.csproj and updates:
 # - Client/package.json
 # - Client/.env
