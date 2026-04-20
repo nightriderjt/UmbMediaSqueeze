@@ -1,6 +1,7 @@
-import { UMB_ENTITY_HAS_CHILDREN_CONDITION_ALIAS } from '@umbraco-cms/backoffice/entity-action';
-import { UMB_MEDIA_ENTITY_TYPE, UMB_MEDIA_TREE_ALIAS } from '@umbraco-cms/backoffice/media';
-import { UMB_ENTITY_IS_NOT_TRASHED_CONDITION_ALIAS } from '@umbraco-cms/backoffice/recycle-bin';
+
+import {   UMB_MEDIA_ENTITY_TYPE } from '@umbraco-cms/backoffice/media';
+
+
 
 export const manifests:Array<UmbExtensionManifest>  = [
   {
@@ -13,16 +14,12 @@ export const manifests:Array<UmbExtensionManifest>  = [
     forEntityTypes:[UMB_MEDIA_ENTITY_TYPE],
     meta: {
       icon: 'icon-download',
-      label: 'Download'      ,
-      treeAlias: UMB_MEDIA_TREE_ALIAS,
+      label: 'Download'
+     
     },
     conditions: [
-			{
-        alias: UMB_ENTITY_IS_NOT_TRASHED_CONDITION_ALIAS        
-			},
-      {
-        alias:UMB_ENTITY_HAS_CHILDREN_CONDITION_ALIAS     
-      }
+	{alias: "Umb.Condition.SectionAlias",
+    match: 'Umb.Section.Media'}
     ]
-  },
+  }
 ];

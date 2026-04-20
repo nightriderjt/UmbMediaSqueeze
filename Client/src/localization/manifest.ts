@@ -10,7 +10,7 @@ export const manifests : Array<UmbExtensionManifest>= [
   },
   {
     type: "localization",
-    alias: "UmbMediaSqueeze.Localization.En",
+    alias: "UmbMediaSqueeze.Localization.Uk",
     name: "UmbMediaSqueeze English Localization",
     meta: {
       culture: "en"  

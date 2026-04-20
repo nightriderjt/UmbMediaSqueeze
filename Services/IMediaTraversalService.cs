@@ -10,6 +10,12 @@ namespace UmbMediaSqueeze.Services
             string? currentPath,
             CompressionJob job);
 
+        Task TraverseMediaFolderStreamingAsync(
+            IMedia media,
+            string? currentPath,
+            CompressionJob job,
+            Func<Stream, string, long, Task> processFileCallback);
+
         Task<Stream?> GetMediaStreamAsync(IMedia media);
 
         string GetMediaFileName(IMedia media);

@@ -97,7 +97,7 @@ export class UmbMediaSqueezeDownloadProgressModalElement extends UmbModalBaseEle
 
   private _startPolling() {
     this._stopPolling();
-    this._pollingInterval = window.setInterval(() => this._checkStatus(), 1000);
+    this._pollingInterval = window.setInterval(() => this._checkStatus(), 100);
   }
 
   private _stopPolling() {
@@ -212,9 +212,7 @@ export class UmbMediaSqueezeDownloadProgressModalElement extends UmbModalBaseEle
             ${!isProcessing ? html`              
             ` : html`
             <div class="progress-text">
-              ${this.localize.term('umbMediaSqueeze_progress', progressPercentage.toString())}
-              <br>
-              ${this._status.currentFile}
+              ${this.localize.term('umbMediaSqueeze_progress', progressPercentage.toString())}              
             </div>`}
           </div>
           

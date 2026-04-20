@@ -1,6 +1,6 @@
 import { UmbEntityActionBase as a } from "@umbraco-cms/backoffice/entity-action";
 import { UMB_MODAL_MANAGER_CONTEXT as n } from "@umbraco-cms/backoffice/modal";
-import { U as l } from "./bundle.manifests-Dnibg1Gr.js";
+import { U as l } from "./bundle.manifests-Cw82bfga.js";
 class m extends a {
   constructor(o, e) {
     super(o, e);
@@ -30,4 +30,4 @@ class m extends a {
 export {
   m as default
 };
-//# sourceMappingURL=download-media-folder.action-BoePfbHL.js.map
+//# sourceMappingURL=download-media-folder.action-4VFTNTQn.js.map

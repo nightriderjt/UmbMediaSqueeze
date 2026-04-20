@@ -102,6 +102,86 @@ namespace UmbMediaSqueeze.Services
             return mediaStreams;
         }
 
+        public async Task TraverseMediaFolderStreamingAsync(
+            IMedia media,
+            string? currentPath,
+            CompressionJob job,
+            Func<Stream, string, long, Task> processFileCallback)
+        {
+            // Get all children of this media item
+            var page = 0;
+            const int pageSize = 100;
+
+            while (true)
+            {
+                var children = _mediaService.GetPagedChildren(media.Id, page, pageSize, out var total);
+
+                foreach (var child in children)
+                {
+                    // Check if child is a folder (has children of its own)
+                    var childChildren = _mediaService.GetPagedChildren(child.Id, 0, 1, out var childTotal);
+
+                    if (childTotal > 0)
+                    {
+                        // This is a subfolder, traverse recursively
+                        var childName = child.Name ?? "Unnamed";
+                        var childPath = string.IsNullOrEmpty(currentPath) ? childName : Path.Combine(currentPath, childName);
+                        await TraverseMediaFolderStreamingAsync(child, childPath, job, processFileCallback);
+                    }
+                    else
+                    {
+                        job.CurrentFile = child.Name ?? "Unnamed";
+                        // This is a media file, try to get its content as a stream
+                        var stream = await GetMediaStreamAsync(child);
+                        if (stream != null)
+                        {
+                            try
+                            {
+                                // Get the actual filename from media properties
+                                var fileName = GetMediaFileName(child);
+                                var entryName = string.IsNullOrEmpty(currentPath)
+                                    ? fileName
+                                    : Path.Combine(currentPath, fileName);
+
+                                // Try to get file size if possible
+                                long fileSize = 0;
+                                try
+                                {
+                                    if (stream.CanSeek)
+                                    {
+                                        fileSize = stream.Length;
+                                    }
+                                    else
+                                    {
+                                        // For non-seekable streams, we'll estimate or use 0
+                                        fileSize = 0;
+                                    }
+                                }
+                                catch
+                                {
+                                    fileSize = 0;
+                                }
+
+                                // Process the file immediately via callback
+                                await processFileCallback(stream, entryName, fileSize);
+                            }
+                            finally
+                            {
+                                // Ensure stream is disposed after processing
+                                stream.Dispose();
+                            }
+                        }
+                    }
+                }
+
+                page++;
+                if (page * pageSize >= total)
+                {
+                    break;
+                }
+            }
+        }
+
         public async Task<Stream?> GetMediaStreamAsync(IMedia media)
         {
             try

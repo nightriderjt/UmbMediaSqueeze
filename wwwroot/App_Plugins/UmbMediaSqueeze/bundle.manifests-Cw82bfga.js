@@ -1,15 +1,13 @@
-import { UMB_ENTITY_HAS_CHILDREN_CONDITION_ALIAS as e } from "@umbraco-cms/backoffice/entity-action";
-import { UMB_MEDIA_TREE_ALIAS as a, UMB_MEDIA_ENTITY_TYPE as o } from "@umbraco-cms/backoffice/media";
-import { UMB_ENTITY_IS_NOT_TRASHED_CONDITION_ALIAS as i } from "@umbraco-cms/backoffice/recycle-bin";
-import { UmbModalToken as t } from "@umbraco-cms/backoffice/modal";
-const n = [
+import { UMB_MEDIA_ENTITY_TYPE as e } from "@umbraco-cms/backoffice/media";
+import { UmbModalToken as a } from "@umbraco-cms/backoffice/modal";
+const i = [
   {
     name: "Umb Media Squeeze Entrypoint",
     alias: "UmbMediaSqueeze.Entrypoint",
     type: "backofficeEntryPoint",
     js: () => import("./entrypoint-BSlTz4-p.js")
   }
-], l = [
+], o = [
   {
     type: "localization",
     alias: "UmbMediaSqueeze.Localization.En",
@@ -21,7 +19,7 @@ const n = [
   },
   {
     type: "localization",
-    alias: "UmbMediaSqueeze.Localization.En",
+    alias: "UmbMediaSqueeze.Localization.Uk",
     name: "UmbMediaSqueeze English Localization",
     meta: {
       culture: "en"
@@ -37,30 +35,27 @@ const n = [
     },
     js: () => import("./el-CizvAClQ.js")
   }
-], m = [
+], t = [
   {
     type: "entityAction",
     kind: "default",
     alias: "Umb.EntityAction.Media.DownloadMediaFolder",
     name: "Download Media Folder Action",
     weight: 100,
-    api: () => import("./download-media-folder.action-BoePfbHL.js"),
-    forEntityTypes: [o],
+    api: () => import("./download-media-folder.action-4VFTNTQn.js"),
+    forEntityTypes: [e],
     meta: {
       icon: "icon-download",
-      label: "Download",
-      treeAlias: a
+      label: "Download"
     },
     conditions: [
       {
-        alias: i
-      },
-      {
-        alias: e
+        alias: "Umb.Condition.SectionAlias",
+        match: "Umb.Section.Media"
       }
     ]
   }
-], s = new t(
+], n = new a(
   "Umb.Modal.MediaSqueeze.DownloadProgress",
   {
     modal: {
@@ -68,22 +63,22 @@ const n = [
       size: "small"
     }
   }
-), d = [
+), l = [
   {
     type: "modal",
     alias: "Umb.Modal.MediaSqueeze.DownloadProgress",
     name: "Media Squeeze Download Progress Modal",
-    element: () => import("./download-progress-modal.element-B0UKVoQs.js"),
-    token: s
+    element: () => import("./download-progress-modal.element-DSCUlEdZ.js"),
+    token: n
   }
-], z = [
-  ...n,
-  ...l,
-  ...m,
-  ...d
+], d = [
+  ...i,
+  ...o,
+  ...t,
+  ...l
 ];
 export {
-  s as U,
-  z as m
+  n as U,
+  d as m
 };
-//# sourceMappingURL=bundle.manifests-Dnibg1Gr.js.map
+//# sourceMappingURL=bundle.manifests-Cw82bfga.js.map

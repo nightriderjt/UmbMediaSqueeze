@@ -58,7 +58,7 @@ let a = class extends _ {
     }
   }
   _startPolling() {
-    this._stopPolling(), this._pollingInterval = window.setInterval(() => this._checkStatus(), 1e3);
+    this._stopPolling(), this._pollingInterval = window.setInterval(() => this._checkStatus(), 100);
   }
   _stopPolling() {
     this._pollingInterval && (window.clearInterval(this._pollingInterval), this._pollingInterval = void 0);
@@ -130,9 +130,7 @@ let a = class extends _ {
             </div>
             ${o ? r`
             <div class="progress-text">
-              ${this.localize.term("umbMediaSqueeze_progress", e.toString())}
-              <br>
-              ${this._status.currentFile}
+              ${this.localize.term("umbMediaSqueeze_progress", e.toString())}              
             </div>` : r`              
             `}
           </div>
@@ -275,4 +273,4 @@ export {
   a as UmbMediaSqueezeDownloadProgressModalElement,
   q as default
 };
-//# sourceMappingURL=download-progress-modal.element-B0UKVoQs.js.map
+//# sourceMappingURL=download-progress-modal.element-DSCUlEdZ.js.map
