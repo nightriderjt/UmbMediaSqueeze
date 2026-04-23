@@ -46,7 +46,7 @@ namespace UmbMediaSqueeze.Controllers
         public async Task<IActionResult> Squeeze([FromBody] SqueezePostModel squeezePostModel)
         {
             // Create job using service
-            var job = _jobManagementService.CreateJob(squeezePostModel.MediaGuid);
+            var job = _jobManagementService.CreateJob(squeezePostModel.MediaGuids[0]);
 
             // Start compression in background using service
             _ = Task.Run(() => _mediaCompressionService.CompressMediaAsync(job));

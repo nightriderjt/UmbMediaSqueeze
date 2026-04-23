@@ -2,6 +2,6 @@
 {
     public class SqueezePostModel
     {
-        public Guid MediaGuid { get; set; }
+        public Guid[]? MediaGuids { get; set; }
     }
 }
