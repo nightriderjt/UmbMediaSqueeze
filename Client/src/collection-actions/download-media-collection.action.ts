@@ -39,7 +39,7 @@ else{
      });
  
      // Handle modal result
-     modalContext?.onSubmit().then((result) => {
+    await modalContext?.onSubmit().then((result) => {
        if (result?.downloaded) {
          console.log('Download completed successfully');
        }
