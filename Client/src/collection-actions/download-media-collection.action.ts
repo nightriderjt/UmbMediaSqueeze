@@ -25,7 +25,13 @@ export default class UmbDownloadMediaBulkAction extends UmbEntityBulkActionBase<
     // The collection context provides the entity type and unique identifier
     const selection= this.selection;
     
+if(selection.length === 0){
+ 
+  console.error('No media selected');
+ 
 
+}
+else{
   const modalContext = modalManager.open(this, UMB_DOWNLOAD_PROGRESS_MODAL, {
        data: {
          mediaGuids: selection
@@ -42,4 +48,8 @@ export default class UmbDownloadMediaBulkAction extends UmbEntityBulkActionBase<
        console.log('Download modal closed');
      });
   }
+
+
+}
+
 }

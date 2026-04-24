@@ -8,13 +8,15 @@ namespace UmbMediaSqueeze.Services
         private readonly ConcurrentDictionary<Guid, CompressionJob> _jobs = new();
         private readonly object _lock = new();
 
-        public CompressionJob CreateJob(Guid mediaGuid)
+        public CompressionJob CreateJob(IEnumerable<Guid> mediaGuids)
         {
+            var guidList = mediaGuids.ToList();
             var jobId = Guid.NewGuid();
             var job = new CompressionJob
             {
                 Id = jobId,
-                MediaGuid = mediaGuid,
+                MediaGuid = guidList.FirstOrDefault(),
+                MediaGuids = guidList,
                 Status = CompressionStatus.Queued,
                 Progress = 0,
                 StartTime = DateTime.UtcNow
