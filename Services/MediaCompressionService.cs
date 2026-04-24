@@ -31,28 +31,8 @@ namespace UmbMediaSqueeze.Services
             {
                 job.Status = CompressionStatus.Processing;
                 job.Message = "Preparing files...";
-                job.Progress = 10;
+                job.Progress = 5;
                 _jobManagementService.UpdateJob(job);
-
-                // Get media item
-                var media = _mediaService.GetById(job.MediaGuid);
-                if (media == null)
-                {
-                    job.Status = CompressionStatus.Failed;
-                    job.Error = "Media not found";
-                    _jobManagementService.UpdateJob(job);
-                    return;
-                }
-
-                // Check if media is a folder (has children)
-                var children = _mediaService.GetPagedChildren(media.Id, 0, 1, out var totalChildren);
-                if (totalChildren == 0)
-                {
-                    job.Status = CompressionStatus.Failed;
-                    job.Error = "Selected media is not a folder or has no children";
-                    _jobManagementService.UpdateJob(job);
-                    return;
-                }
 
                 // Use Umbraco's temp directory
                 var umbracoTempPath = Path.Combine(_env.ContentRootPath, "umbraco", "Data", "Temp", "Squeeze");
@@ -62,73 +42,132 @@ namespace UmbMediaSqueeze.Services
                 try
                 {
                     // Create zip file
-                    var zipPath = Path.Combine(tempDir, $"media-{job.MediaGuid}.zip");
+                    var zipPath = Path.Combine(tempDir, $"media-{job.MediaGuid:N}.zip");
                     long totalUncompressedSize = 0;
                     long totalCompressedSize = 0;
                     int totalFiles = 0;
                     int processedFiles = 0;
 
-                    job.Message = "Starting compression...";
-                    job.Progress = 20;
+                    job.Message = "Counting files...";
+                    job.Progress = 10;
                     _jobManagementService.UpdateJob(job);
 
-                    // First pass: count total files for progress tracking
-                    await _mediaTraversalService.TraverseMediaFolderStreamingAsync(
-                        media,
-                        media.Name ?? "MediaFolder",
-                        job,
-                        async (stream, entryName, fileSize) =>
+                    // First pass: count total files across all selected media items
+                    foreach (var mediaGuid in job.MediaGuids)
+                    {
+                        var media = _mediaService.GetById(mediaGuid);
+                        if (media == null) continue;
+
+                        if (IsFolderMediaType(media))
                         {
+                            // Traverse folder recursively to count files
+                            await _mediaTraversalService.TraverseMediaFolderStreamingAsync(
+                                media,
+                                media.Name ?? "Unnamed",
+                                job,
+                                async (stream, entryName, fileSize) =>
+                                {
+                                    totalFiles++;
+                                    await Task.CompletedTask;
+                                });
+                        }
+                        else
+                        {
+                            // Single file
                             totalFiles++;
-                            await Task.CompletedTask;
-                        });
+                        }
+                    }
 
                     if (totalFiles == 0)
                     {
                         job.Status = CompressionStatus.Failed;
-                        job.Error = "No media files found in the folder";
+                        job.Error = "No media files found in the selected items";
                         _jobManagementService.UpdateJob(job);
                         return;
                     }
 
                     job.Message = $"Creating archive with {totalFiles} files...";
-                    job.Progress = 30;
+                    job.Progress = 15;
                     _jobManagementService.UpdateJob(job);
 
                     // Second pass: actually compress files
                     using (var zip = ZipFile.Open(zipPath, ZipArchiveMode.Create, System.Text.Encoding.UTF8))
                     {
-                        await _mediaTraversalService.TraverseMediaFolderStreamingAsync(
-                            media,
-                            media.Name ?? "MediaFolder",
-                            job,
-                            async (stream, entryName, fileSize) =>
+                        foreach (var mediaGuid in job.MediaGuids)
+                        {
+                            var media = _mediaService.GetById(mediaGuid);
+                            if (media == null) continue;
+
+                            if (IsFolderMediaType(media))
                             {
-                                try
+                                // Traverse folder recursively and add files to zip
+                                await _mediaTraversalService.TraverseMediaFolderStreamingAsync(
+                                    media,
+                                    media.Name ?? "Unnamed",
+                                    job,
+                                    async (stream, entryName, fileSize) =>
+                                    {
+                                        try
+                                        {
+                                            totalUncompressedSize += fileSize;
+
+                                            // Create zip entry from stream
+                                            var entry = zip.CreateEntry(entryName, CompressionLevel.SmallestSize);
+                                            using var entryStream = entry.Open();
+                                            await stream.CopyToAsync(entryStream);
+
+                                            processedFiles++;
+
+                                            // Update progress (15% to 85%)
+                                            job.Progress = 15 + (int)((processedFiles / (double)totalFiles) * 70);
+                                            job.Message = $"Squeezing file {processedFiles} of {totalFiles}: {Path.GetFileName(entryName)}";
+                                            _jobManagementService.UpdateJob(job);
+                                        }
+                                        finally
+                                        {
+                                            stream.Dispose();
+                                        }
+                                    });
+                            }
+                            else
+                            {
+                                // Single file - include directly
+                                var stream = await _mediaTraversalService.GetMediaStreamAsync(media);
+                                if (stream != null)
                                 {
-                                    totalUncompressedSize += fileSize;
+                                    try
+                                    {
+                                        var fileName = _mediaTraversalService.GetMediaFileName(media);
+                                        long fileSize = 0;
+                                        try
+                                        {
+                                            if (stream.CanSeek) fileSize = stream.Length;
+                                        }
+                                        catch { }
 
-                                    // Create zip entry from stream
-                                    var entry = zip.CreateEntry(entryName, CompressionLevel.SmallestSize);
-                                    using var entryStream = entry.Open();
-                                    await stream.CopyToAsync(entryStream);
+                                        totalUncompressedSize += fileSize;
 
-                                    processedFiles++;
+                                        var entry = zip.CreateEntry(fileName, CompressionLevel.SmallestSize);
+                                        using var entryStream = entry.Open();
+                                        await stream.CopyToAsync(entryStream);
 
-                                    // Update progress
-                                    job.Progress = 30 + (int)((processedFiles / (double)totalFiles) * 50);
-                                    job.Message = $"Squeezing file {processedFiles} of {totalFiles}: {Path.GetFileName(entryName)}";
-                                    _jobManagementService.UpdateJob(job);
+                                        processedFiles++;
+
+                                        job.Progress = 15 + (int)((processedFiles / (double)totalFiles) * 70);
+                                        job.Message = $"Squeezing file {processedFiles} of {totalFiles}: {fileName}";
+                                        _jobManagementService.UpdateJob(job);
+                                    }
+                                    finally
+                                    {
+                                        stream.Dispose();
+                                    }
                                 }
-                                finally
-                                {
-                                    stream.Dispose();
-                                }
-                            });
+                            }
+                        }
 
                         // Add info.txt file with compression details
                         var infoEntry = zip.CreateEntry("compression-info.txt", CompressionLevel.NoCompression);
-                        await CreateCompressionInfo(job, media, totalFiles, totalUncompressedSize, infoEntry);
+                        await CreateCompressionInfo(job, totalFiles, totalUncompressedSize, infoEntry);
                     }
 
                     // Get compressed size after zip is created
@@ -136,7 +175,6 @@ namespace UmbMediaSqueeze.Services
                     totalCompressedSize = zipFileInfo.Length;
 
                     // Update the info.txt file with compressed size
-                    // We need to reopen the zip file to update the info.txt
                     using (var zip = ZipFile.Open(zipPath, ZipArchiveMode.Update, System.Text.Encoding.UTF8))
                     {
                         var infoEntry = zip.GetEntry("compression-info.txt");
@@ -146,11 +184,11 @@ namespace UmbMediaSqueeze.Services
                         }
 
                         infoEntry = zip.CreateEntry("compression-info.txt", CompressionLevel.NoCompression);
-                        await UpdateCompressionInfo(job, media, totalFiles, totalUncompressedSize, totalCompressedSize, infoEntry);
+                        await UpdateCompressionInfo(job, totalFiles, totalUncompressedSize, totalCompressedSize, infoEntry);
                     }
 
                     job.Message = "Finalizing...";
-                    job.Progress = 90;
+                    job.Progress = 95;
                     _jobManagementService.UpdateJob(job);
 
                     job.FilePath = zipPath;
@@ -186,17 +224,29 @@ namespace UmbMediaSqueeze.Services
             }
         }
 
-        private async Task CreateCompressionInfo(CompressionJob job, IMedia media,
+        private bool IsFolderMediaType(IMedia media)
+        {
+            return media.ContentType.Alias.Equals("Folder", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private async Task CreateCompressionInfo(CompressionJob job,
             int totalFiles,
             long totalUncompressedSize, ZipArchiveEntry infoEntry)
         {
             using var writer = new StreamWriter(infoEntry.Open(), System.Text.Encoding.UTF8);
-            await writer.WriteLineAsync($"Media Folder Compression Report");
+            await writer.WriteLineAsync($"Media Compression Report");
             await writer.WriteLineAsync($"================================");
             await writer.WriteLineAsync($"");
-            await writer.WriteLineAsync($"Folder Name: {media.Name}");
-            await writer.WriteLineAsync($"Media GUID: {job.MediaGuid}");
             await writer.WriteLineAsync($"Compression Date: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC");
+            await writer.WriteLineAsync($"");
+            await writer.WriteLineAsync($"Selected Items ({job.MediaGuids.Count}):");
+            foreach (var guid in job.MediaGuids)
+            {
+                var media = _mediaService.GetById(guid);
+                var name = media?.Name ?? "Unknown";
+                var type = media != null && IsFolderMediaType(media) ? "Folder" : "File";
+                await writer.WriteLineAsync($"  - {name} ({type}) [{guid:N}]");
+            }
             await writer.WriteLineAsync($"");
             await writer.WriteLineAsync($"File Statistics:");
             await writer.WriteLineAsync($"  Total Files: {totalFiles}");
@@ -209,17 +259,24 @@ namespace UmbMediaSqueeze.Services
             await writer.WriteLineAsync($"Generated by UmbMediaSqueeze");
         }
 
-        private async Task UpdateCompressionInfo(CompressionJob job, IMedia media,
+        private async Task UpdateCompressionInfo(CompressionJob job,
             int totalFiles,
             long totalUncompressedSize, long totalCompressedSize, ZipArchiveEntry infoEntry)
         {
             using var writer = new StreamWriter(infoEntry.Open(), System.Text.Encoding.UTF8);
-            await writer.WriteLineAsync($"Media Folder Compression Report");
+            await writer.WriteLineAsync($"Media Compression Report");
             await writer.WriteLineAsync($"================================");
             await writer.WriteLineAsync($"");
-            await writer.WriteLineAsync($"Folder Name: {media.Name}");
-            await writer.WriteLineAsync($"Media GUID: {job.MediaGuid}");
             await writer.WriteLineAsync($"Compression Date: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC");
+            await writer.WriteLineAsync($"");
+            await writer.WriteLineAsync($"Selected Items ({job.MediaGuids.Count}):");
+            foreach (var guid in job.MediaGuids)
+            {
+                var media = _mediaService.GetById(guid);
+                var name = media?.Name ?? "Unknown";
+                var type = media != null && IsFolderMediaType(media) ? "Folder" : "File";
+                await writer.WriteLineAsync($"  - {name} ({type}) [{guid:N}]");
+            }
             await writer.WriteLineAsync($"");
             await writer.WriteLineAsync($"File Statistics:");
             await writer.WriteLineAsync($"  Total Files: {totalFiles}");

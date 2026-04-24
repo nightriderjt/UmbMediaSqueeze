@@ -417,3 +417,5 @@ FodyWeavers.xsd
 *.msm
 *.msp
 sync-version.ps1
+/sync-version.ps1
+/wwwroot

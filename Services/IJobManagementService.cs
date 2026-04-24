@@ -4,7 +4,7 @@ namespace UmbMediaSqueeze.Services
 {
     public interface IJobManagementService
     {
-        CompressionJob CreateJob(Guid mediaGuid);
+        CompressionJob CreateJob(IEnumerable<Guid> mediaGuids);
         CompressionJob? GetJob(Guid jobId);
         void UpdateJob(CompressionJob job);
         void RemoveJob(Guid jobId);

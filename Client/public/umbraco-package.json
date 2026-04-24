@@ -1,7 +1,7 @@
 {
   "id": "UmbMediaSqueeze",
   "name": "UmbMediaSqueeze",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "allowTelemetry": true,
   "extensions": [
     {

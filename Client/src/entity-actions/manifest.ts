@@ -14,7 +14,7 @@ export const manifests:Array<UmbExtensionManifest>  = [
     forEntityTypes:[UMB_MEDIA_ENTITY_TYPE],
     meta: {
       icon: 'icon-download',
-      label: 'Download'
+      label: '#umbMediaSqueeze_download'
      
     },
     conditions: [

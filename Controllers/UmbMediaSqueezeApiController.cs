@@ -45,8 +45,13 @@ namespace UmbMediaSqueeze.Controllers
         [HttpPost("squeeze")]
         public async Task<IActionResult> Squeeze([FromBody] SqueezePostModel squeezePostModel)
         {
-            // Create job using service
-            var job = _jobManagementService.CreateJob(squeezePostModel.MediaGuid);
+            if (squeezePostModel.MediaGuids == null || squeezePostModel.MediaGuids.Length == 0)
+            {
+                return BadRequest(new { error = "No media GUIDs provided" });
+            }
+
+            // Create job with all media GUIDs
+            var job = _jobManagementService.CreateJob(squeezePostModel.MediaGuids);
 
             // Start compression in background using service
             _ = Task.Run(() => _mediaCompressionService.CompressMediaAsync(job));
@@ -91,7 +96,7 @@ namespace UmbMediaSqueeze.Controllers
                 return NotFound(new { error = "File not found" });
             }
 
-            var fileName = $"{job.MediaGuid.ToString("N")}.zip";
+            var fileName = $"{job.MediaGuid:N}.zip";
             var fileBytes = System.IO.File.ReadAllBytes(job.FilePath);
 
             // Clean up file and remove job from service

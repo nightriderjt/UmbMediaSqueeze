@@ -58,14 +58,14 @@ export class UmbMediaSqueezeDownloadProgressModalElement extends UmbModalBaseEle
   }
 
   private async _startCompression() {
-    if (!this.data?.mediaGuid) {
+    if (!this.data?.mediaGuids) {
       this._showError('No media selected');
       return;
     }
 
     try {
       const token = await this.#authContext?.getLatestToken();
-      const postData={ MediaGuid: this.data.mediaGuid };
+      const postData={ MediaGuids: this.data.mediaGuids };
       const response = await fetch('/umbraco/management/api/v1/umbmediasqueeze/squeeze', {
         method: 'POST',
         headers: {
@@ -152,7 +152,7 @@ export class UmbMediaSqueezeDownloadProgressModalElement extends UmbModalBaseEle
       const anchor = document.createElement('a');
       anchor.target = '_blank';
       anchor.href = this._status.downloadUrl;
-      anchor.download = `media-${this.data?.mediaGuid}.zip`;
+      anchor.download = `media-${this.data?.mediaGuids[0]}.zip`;
       anchor.style.display = 'none';
       document.body.appendChild(anchor);
       anchor.click();

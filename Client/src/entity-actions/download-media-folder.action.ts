@@ -28,7 +28,7 @@ export default class UmbDownloadMediaFolderEntityAction extends UmbEntityActionB
    
     const modalContext = modalManager.open(this, UMB_DOWNLOAD_PROGRESS_MODAL, {
       data: {
-        mediaGuid: unique
+        mediaGuids: [unique]
       }
     });
 

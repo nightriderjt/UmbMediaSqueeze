@@ -1,7 +1,7 @@
 import { UmbModalToken } from '@umbraco-cms/backoffice/modal';
 
 export interface DownloadProgressModalData {
-  mediaGuid: string;
+  mediaGuids: string[];
 }
 
 export interface DownloadProgressModalValue {

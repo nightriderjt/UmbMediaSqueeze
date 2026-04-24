@@ -4,6 +4,7 @@ namespace UmbMediaSqueeze.Models
     {
         public Guid Id { get; set; }
         public Guid MediaGuid { get; set; }
+        public List<Guid> MediaGuids { get; set; } = new();
         public CompressionStatus Status { get; set; }
         public int Progress { get; set; }
         public string? Message { get; set; }
