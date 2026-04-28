@@ -1,3 +1,5 @@
+using System.IO.Compression;
+
 namespace UmbMediaSqueeze.Models
 {
     public class CompressionJob
@@ -13,5 +15,6 @@ namespace UmbMediaSqueeze.Models
         public DateTime StartTime { get; set; }
         public DateTime? CompletionTime { get; set; }
         public string? CurrentFile { get; set; }
+        public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.SmallestSize;
     }
 }

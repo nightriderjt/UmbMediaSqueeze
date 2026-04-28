@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.IO.Compression;
 using UmbMediaSqueeze.Models;
 
 namespace UmbMediaSqueeze.Services
@@ -8,7 +9,7 @@ namespace UmbMediaSqueeze.Services
         private readonly ConcurrentDictionary<Guid, CompressionJob> _jobs = new();
         private readonly object _lock = new();
 
-        public CompressionJob CreateJob(IEnumerable<Guid> mediaGuids)
+        public CompressionJob CreateJob(IEnumerable<Guid> mediaGuids, CompressionLevel compressionLevel = CompressionLevel.SmallestSize)
         {
             var guidList = mediaGuids.ToList();
             var jobId = Guid.NewGuid();
@@ -19,7 +20,8 @@ namespace UmbMediaSqueeze.Services
                 MediaGuids = guidList,
                 Status = CompressionStatus.Queued,
                 Progress = 0,
-                StartTime = DateTime.UtcNow
+                StartTime = DateTime.UtcNow,
+                CompressionLevel = compressionLevel
             };
 
             _jobs[jobId] = job;

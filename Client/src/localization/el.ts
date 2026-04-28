@@ -23,8 +23,14 @@ export default {
     "button_cancel": "Ακύρωση",
     "button_download": "Λήψη",
     "button_close": "Κλείσιμο",
+    "button_start": "Έναρξη Συμπίεσης",
     "error_failed": "Η συμπίεση απέτυχε: {0}",
     "error_notFound": "Δεν βρέθηκαν πολυμέσα",
-    "error_jobNotFound": "Δεν βρέθηκε εργασία συμπίεσης"
+    "error_jobNotFound": "Δεν βρέθηκε εργασία συμπίεσης",
+    "compression_level_label": "Επίπεδο Συμπίεσης",
+    "compression_level_optimal": "Βέλτιστο (ισορροπημένο)",
+    "compression_level_smallest": "Μικρότερο Μέγεθος (πιο αργό)",
+    "compression_level_fastest": "Γρηγορότερο (μεγαλύτερο αρχείο)",
+    "compression_level_none": "Χωρίς Συμπίεση"
   }
 };
