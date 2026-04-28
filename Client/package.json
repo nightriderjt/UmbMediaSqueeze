@@ -1,7 +1,7 @@
 {
   "name": "umb-media-squeeze",
   "private": true,
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "scripts": {
     "watch": "tsc && vite build --watch",
