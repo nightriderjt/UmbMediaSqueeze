@@ -23,8 +23,14 @@ export default {
     "button_cancel": "Cancel",
     "button_download": "Download",
     "button_close": "Close",
+    "button_start": "Start Squeezing",
     "error_failed": "Squeezing failed: {0}",
     "error_notFound": "Media not found",
-    "error_jobNotFound": "Squeezing job not found"
+    "error_jobNotFound": "Squeezing job not found",
+    "compression_level_label": "Compression Level",
+    "compression_level_optimal": "Optimal (balanced)",
+    "compression_level_smallest": "Smallest Size (slowest)",
+    "compression_level_fastest": "Fastest (larger file)",
+    "compression_level_none": "No Compression"
   }
 };

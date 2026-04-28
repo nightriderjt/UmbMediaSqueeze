@@ -50,8 +50,9 @@ namespace UmbMediaSqueeze.Controllers
                 return BadRequest(new { error = "No media GUIDs provided" });
             }
 
-            // Create job with all media GUIDs
-            var job = _jobManagementService.CreateJob(squeezePostModel.MediaGuids);
+            // Create job with all media GUIDs and compression level
+            var compressionLevel = squeezePostModel.CompressionLevel ?? System.IO.Compression.CompressionLevel.SmallestSize;
+            var job = _jobManagementService.CreateJob(squeezePostModel.MediaGuids, compressionLevel);
 
             // Start compression in background using service
             _ = Task.Run(() => _mediaCompressionService.CompressMediaAsync(job));
